@@ -6,6 +6,7 @@
 # ...except the published prebuilt Windows binary
 !tiemesh.exe
 tiemesh
+tiemesh-ble
 keytest
 # logs
 *.log
