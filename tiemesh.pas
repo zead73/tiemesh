@@ -41,7 +41,7 @@ uses
 
 const
   PROMPT = '> ';
-  VERNUM = 0.06;                  { tiemesh version number; bump on each new feature }
+  VERNUM = 0.07;                  { tiemesh version number; bump on each new feature }
   COMPDATE = {$I %DATE%};         { compile date, stamped in by the compiler }
 
 var
@@ -794,7 +794,7 @@ begin
   Show('  /capture               toggle silent capture of device debug to file');
   Show('  /dlog [n]              show the last n debug-log lines, coloured');
   Show('  /rf                    show signal quality (SNR/RSSI, radio counters)');
-  Show('  /version               show version and compile date');
+  Show('  /version               show tiemesh version and radio firmware');
   Show('  /confirm               toggle the send-confirmation prompt');
   Show('  /names                 toggle short names / short names with !ids');
   Show('  /hops [n]              show or set the outgoing hop limit (1..7)');
@@ -1410,7 +1410,13 @@ begin
                        else
                          Show('capture off');
                      end;
-    '/version':      ShowPainted(C_BANNER, BannerText);
+    '/version':      begin
+                       ShowPainted(C_BANNER, BannerText);
+                       if Client.FirmwareVersion <> '' then
+                         ShowPainted(C_META, 'radio firmware: ' + Client.FirmwareVersion)
+                       else
+                         ShowPainted(C_HOPS, 'radio firmware: unknown (not reported yet)');
+                     end;
     '/confirm':      begin ConfirmSends := not ConfirmSends; Show('confirm-before-send = ' + BoolToStr(ConfirmSends, True)); end;
     '/hops':
       begin

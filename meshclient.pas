@@ -41,6 +41,7 @@ type
     FChannels: array of TChannelInfo;
     FPendingAcks: array of LongWord;
     FMyNum: LongWord;
+    FFirmwareVersion: string;   { radio firmware, from DeviceMetadata }
     FNonce: LongWord;
     FConfigDone: Boolean;
     FShowIds: Boolean;   { NodeLabel appends "(!id)" after the short name }
@@ -76,6 +77,7 @@ type
     function MyNum: LongWord;
     function ConfigComplete: Boolean;
     function RfStats: TRfStats;
+    function FirmwareVersion: string;
 
     function ResolveTarget(const s: string; out num: LongWord): Boolean;
     function NodeLabel(num: LongWord): string;
@@ -402,6 +404,8 @@ begin
   case fr.Kind of
     frMyInfo:
       FMyNum := fr.MyNodeNum;
+    frMetadata:
+      FFirmwareVersion := fr.FirmwareVersion;
     frNodeInfo:
       begin
         UpsertNode(fr.Node);
@@ -483,6 +487,11 @@ end;
 function TMeshClient.RfStats: TRfStats;
 begin
   Result := FRf;
+end;
+
+function TMeshClient.FirmwareVersion: string;
+begin
+  Result := FFirmwareVersion;
 end;
 
 function TMeshClient.ConfigComplete: Boolean;

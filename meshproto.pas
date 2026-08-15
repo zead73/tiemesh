@@ -126,7 +126,8 @@ type
   end;
 
   TFromRadioKind = (frUnknown, frPacket, frMyInfo, frNodeInfo,
-                    frConfigComplete, frChannel, frLogRecord, frRebooted);
+                    frConfigComplete, frChannel, frLogRecord, frRebooted,
+                    frMetadata);
 
   TFromRadio = record
     Kind: TFromRadioKind;
@@ -137,6 +138,7 @@ type
     Channel: TChannelInfo;
     ConfigCompleteId: LongWord;
     LogText: string;
+    FirmwareVersion: string;       { DeviceMetadata.firmware_version }
   end;
 
   TRouteDiscovery = record
@@ -822,6 +824,18 @@ begin
         7: begin Result.ConfigCompleteId := LongWord(r.ReadVarint); Result.Kind := frConfigComplete; end;
         8: begin r.ReadVarint; Result.Kind := frRebooted; end;
         10: begin r.ReadLenSlice(ss, ll); Result.Channel := DecodeChannel(b, ss, ll); Result.Kind := frChannel; end;
+        13: begin
+             r.ReadLenSlice(ss, ll);                       { DeviceMetadata }
+             mi := TPbReader.Create(b, ss, ll);
+             try
+               while mi.ReadTag(mf, mw) do
+                 if mf = 1 then Result.FirmwareVersion := mi.ReadLenString
+                 else mi.SkipField(mw);
+             finally
+               mi.Free;
+             end;
+             Result.Kind := frMetadata;
+           end;
       else
         r.SkipField(w);
       end;

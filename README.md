@@ -129,6 +129,7 @@ as plain text.
 /names                 toggle short names / short names with !ids
 /hops [n]              show or set the outgoing hop limit (1..7)
 /bell                  toggle the incoming-message sound
+/version               show tiemesh version and radio firmware
 /quit                  disconnect and exit
 <text>                 send text to the current target/channel
 ```
